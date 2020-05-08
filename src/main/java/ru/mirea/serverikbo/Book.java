@@ -1,20 +1,40 @@
 package ru.mirea.serverikbo;
+import org.hibernate.annotations.NaturalId;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="Book")
+@Table(name="books")
 public class Book {
     @Id
-    @Column(name="id_book")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name="name_book", length = 50, nullable = false)
+
+    @NotNull
+    @Size(max = 100)
     private String name;
 
-    @ManyToMany (mappedBy = "books")
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "book_authors",
+            joinColumns = { @JoinColumn(name = "book_id") },
+            inverseJoinColumns = { @JoinColumn(name = "author_id") })
+
     private List<Author> authors =new ArrayList<>();
+
+    public Book() {
+    }
+
+    public Book(String name) {
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;
@@ -36,4 +56,14 @@ public class Book {
     public String toString(){
         return "Book{" + id + ", name='" + '\''+'}';
     }
+
+    public List<Author> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<Author> authors) {
+        this.authors = authors;
+    }
+
+
 }

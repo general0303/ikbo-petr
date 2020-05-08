@@ -1,6 +1,9 @@
 package ru.mirea.serverikbo;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AuthorRespository extends CrudRepository<Author, Integer> {
+import java.util.List;
+
+public interface AuthorRespository extends JpaRepository<Author, Integer> {
+    List<Author> findAllBy();
 }

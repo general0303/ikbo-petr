@@ -1,6 +1,9 @@
 package ru.mirea.serverikbo;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BookRespository extends CrudRepository<Book, Integer> {
+import java.util.List;
+
+public interface BookRespository extends JpaRepository<Book, Integer> {
+    List<Book> findAllBy();
 }
