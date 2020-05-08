@@ -1,26 +1,30 @@
 package ru.mirea.serverikbo;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="Author")
+@Table(name="authors")
 public class Author{
     @Id
-    @Column(name="id_author")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name="name_author", length = 50, nullable = false)
+
+    @Column(name="name", length = 50, nullable = false)
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name="Author_Book",
-            joinColumns = @JoinColumn(name="id_author", referencedColumnName = "id_author"),
-            inverseJoinColumns = @JoinColumn(name="id_book", referencedColumnName = "id_book")
-    )
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "authors")
     private List<Book> books= new ArrayList<>();
+
 
     public Integer getId() {
         return id;
@@ -42,4 +46,22 @@ public class Author{
     public String toString() {
         return "Author{" + id + ", name='" + '\'' + '}';
     }
+
+    public Author(String name) {
+        this.name = name;
+
+    }
+
+    public Author() {
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
+
+
 }
