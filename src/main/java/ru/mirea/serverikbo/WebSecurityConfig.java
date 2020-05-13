@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //Доступ только для пользователей с ролью User
                 .antMatchers("/add_author", "/add_book", "/author/{author_id}/delete", "/book/{book_id}/delete", "/author/{author_id}/edit", "/book/{book_id}/edit").hasRole("USER")
                 //Доступ разрешен всем пользователей
-                .antMatchers("/", "/author", "/book", "/author/{author_id}").permitAll()
+                .antMatchers("/", "/author", "/book", "/author/{author_id}", "/maxauthor", "/books").permitAll()
                 //Все остальные страницы требуют аутентификации
                 .anyRequest().authenticated()
                 .and()
