@@ -5,6 +5,19 @@
     <title>Title</title>
 </head>
 <body>
-<b th:text="${author.getName()}"></b>
+<table>
+    <thead>
+    <th>Author</th>
+    <th>Books</th>
+    </thead>
+    <forEach items="${allAuthors}" var="author">
+        <tr>
+            <td th:text="${author.getName()}"></td>
+            <td>
+                <forEach items="{author.getBooks()" var="book"><b th:text="${book.getName()}"></b></forEach>
+            </td>
+        </tr>
+    </forEach>
+</table>
 </body>
 </html>

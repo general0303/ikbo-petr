@@ -44,18 +44,18 @@ public class MainController {
 
         return "Saved author!";
     }
-    @GetMapping(path="/add_book")
-    public @ResponseBody String addNewBook(@RequestParam String name, @RequestParam List<Author> authors){
+    @GetMapping(path="/add_book/{authors}")
+    public @ResponseBody String addNewBook(@RequestParam String name, @RequestParam List<Integer> authors){
         Book book=new Book();
         book.setName(name);
-        for(Author a: authors) {
-            Author aaa = ar.getOne(a.getId());
+        for(Integer a: authors) {
+            Author aaa = ar.getOne(a);
             book.getAuthors().add(aaa);
         }
         br.save(book);
         return "Saved book!";
     }
-    @DeleteMapping(path="/author/{author_id}/delete")
+    @GetMapping(path="/author/delete/{author_id}")
     public @ResponseBody String deleteAuthor(@RequestParam Integer author_id){
         Author author = ar.getOne(author_id);
         for (Book book: author.getBooks()){
@@ -67,7 +67,7 @@ public class MainController {
         ar.delete(author);
         return "Author deleted";
     }
-    @DeleteMapping(path="/book/{book_id}/delete")
+    @GetMapping(path="/book/delete/{book_id}")
     public @ResponseBody String deleteBook(@RequestParam Integer book_id){
         Book book=br.getOne(book_id);
         for (Author author: book.getAuthors()){
@@ -79,7 +79,7 @@ public class MainController {
         br.delete(book);
         return "Book deleted";
     }
-    @GetMapping(path="/author/{author_id}/edit")
+    @GetMapping(path="/author/edit/{author_id}")
     public @ResponseBody String editAuthor(@RequestParam Author author, @RequestParam List<Book> books, @RequestParam String name){
         for (Book book: author.getBooks()){
             for (Author a: book.getAuthors()){
@@ -94,7 +94,7 @@ public class MainController {
         }
         return "Author edited";
     }
-    @GetMapping(path="/book/{book_id}/edit")
+    @GetMapping(path="/book/edit/{book_id}")
     public @ResponseBody String editBook(@RequestParam Book book, @RequestParam List<Author> authors, @RequestParam String name){
         for (Author author: book.getAuthors()){
             for (Book b: author.getBooks()){
