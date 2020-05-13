@@ -81,7 +81,11 @@ public class MainController {
         return "Book deleted";
     }
     @GetMapping(path="/author/edit/{author_id}")
-    public @ResponseBody String editAuthor(@RequestParam Author author, @RequestParam List<Book> books, @RequestParam String name){
+    public @ResponseBody String editAuthor(@RequestParam Integer id, @RequestParam List<Integer> ids, @RequestParam String name){
+        List<Book> books=new ArrayList<>();
+        for (Integer i:ids)
+            books.add(br.getOne(i));
+        Author author=ar.getOne(id);
         for (Book book: author.getBooks()){
             for (Author a: book.getAuthors()){
                 if (author.getId()==a.getId())
@@ -96,7 +100,11 @@ public class MainController {
         return "Author edited";
     }
     @GetMapping(path="/book/edit/{book_id}")
-    public @ResponseBody String editBook(@RequestParam Book book, @RequestParam List<Author> authors, @RequestParam String name){
+    public @ResponseBody String editBook(@RequestParam Integer id, @RequestParam List<Integer> ids, @RequestParam String name){
+        Book book=br.getOne(id);
+        List<Author> authors=new ArrayList<>();
+        for (Integer i:ids)
+            authors.add(ar.getOne(i));
         for (Author author: book.getAuthors()){
             for (Book b: author.getBooks()){
                 if (book.getId()==b.getId())
