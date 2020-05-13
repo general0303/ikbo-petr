@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -114,5 +115,26 @@ public class MainController {
         Author author=ar.getOne(author_id);
         BookDTO authorDTO = new BookDTO();
         return authorDTO.getBookDTOList(author.getBooks());
+    }
+    @GetMapping(path="/books")
+    public @ResponseBody List<BookDTO> getmoreAuthors(){
+        BookDTO people=new BookDTO();
+        List<Book> books=new ArrayList<>();
+        for (Book b: br.findAll()){
+            if (b.getAuthors().size()>3) books.add(b);
+        }
+        return people.getBookDTOList(books);
+    }
+    @GetMapping(path="/maxauthor")
+    public @ResponseBody String maxAuthor(){
+        Author author=new Author();
+        int max=0;
+        for (Author a: ar.findAll()){
+            if (a.getBooks().size()>max){
+                max=a.getBooks().size();
+                author=a;
+            }
+        }
+        return author.getName();
     }
 }
