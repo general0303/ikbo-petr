@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:form="http://www.springframework.org/tags/form">
+<head>
+    <meta charset="utf-8">
+    <title>Регистрация</title>
+</head>
+
+<body>
+<div>
+    <form:form modelAttribute="userForm" method="POST" action="...">
+        <h2>Регистрация</h2>
+        <div>
+            <input type="text" path="username" placeholder="Username"
+                        autofocus="true"></input>
+            <errors path="username"></errors>
+            ${usernameError}
+        </div>
+        <div>
+            <input type="password" path="password" placeholder="Password"></input>
+        </div>
+        <div>
+            <input type="password" path="passwordConfirm"
+                        placeholder="Confirm your password"></input>
+            <errors path="password"></errors>
+            ${passwordError}
+        </div>
+        <button type="submit">Зарегистрироваться</button>
+    </form:form>
+    <a href="/">Главная</a>
+</div>
+</body>
+</html>
