@@ -1,5 +1,6 @@
 package ru.mirea.serverikbo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ public class Author{
                     CascadeType.MERGE
             },
             mappedBy = "authors")
+    @JsonIgnore
     private List<Book> books= new ArrayList<>();
 
 

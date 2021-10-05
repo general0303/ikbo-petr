@@ -24,20 +24,18 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping(path="/author")
+    @GetMapping(path="/authors")
     public @ResponseBody
-    List<AuthorDTO> getAllAuthors(){
-        AuthorDTO booksDTO = new AuthorDTO();
-        return booksDTO.getAuthorDTOList(ar.findAll());
+    List<Author> getAllAuthors(){
+        return ar.findAll();
     }
-    @GetMapping(path="/book")
+    @GetMapping(path="/books")
     public @ResponseBody
-    List<BookDTO> getAllBooks(){
-        BookDTO peopleDTO = new BookDTO();
-        return peopleDTO.getBookDTOList(br.findAll());
+    List<Book> getAllBooks(){
+        return br.findAll();
     }
 
-    @GetMapping(path="/add_author")
+    @PostMapping(path="/add_author")
     public @ResponseBody String addNewAuthor(@RequestParam String name){
         Author author = new Author();
         author.setName(name);
@@ -45,53 +43,35 @@ public class MainController {
 
         return "Saved author!";
     }
-    @GetMapping(path="/add_book/{authors}")
+    @PostMapping(path="/add_book")
     public @ResponseBody String addNewBook(@RequestParam String name, @RequestParam List<Integer> authors){
         Book book=new Book();
         book.setName(name);
         for(Integer a: authors) {
-            Author aaa = ar.getOne(a);
+            Author aaa = ar.findAuthorsById(a);
             book.getAuthors().add(aaa);
         }
         br.save(book);
         return "Saved book!";
     }
-    @GetMapping(path="/author/delete/{author_id}")
-    public @ResponseBody String deleteAuthor(@RequestParam Integer author_id){
-        Author author = ar.getOne(author_id);
-        for (Book book: author.getBooks()){
-            for (Author a: book.getAuthors()){
-                if (author.getId()==a.getId())
-                    book.getAuthors().remove(a);
-            }
-        }
+    @DeleteMapping(path="/author/delete/{author_id}")
+    public @ResponseBody String deleteAuthor(@PathVariable Integer author_id){
+        Author author = ar.findAuthorsById(author_id);
         ar.delete(author);
         return "Author deleted";
     }
-    @GetMapping(path="/book/delete/{book_id}")
-    public @ResponseBody String deleteBook(@RequestParam Integer book_id){
-        Book book=br.getOne(book_id);
-        for (Author author: book.getAuthors()){
-            for (Book b: author.getBooks()){
-                if (book.getId()==b.getId())
-                    author.getBooks().remove(b);
-            }
-        }
+    @DeleteMapping(path="/book/delete/{book_id}")
+    public @ResponseBody String deleteBook(@PathVariable Integer book_id){
+        Book book=br.findBooksById(book_id);
         br.delete(book);
         return "Book deleted";
     }
-    @GetMapping(path="/author/edit/{author_id}")
-    public @ResponseBody String editAuthor(@RequestParam Integer id, @RequestParam List<Integer> ids, @RequestParam String name){
+    @PutMapping(path="/author/edit/{author_id}")
+    public @ResponseBody String editAuthor(@PathVariable Integer author_id, @RequestParam List<Integer> ids, @RequestParam String name){
         List<Book> books=new ArrayList<>();
         for (Integer i:ids)
-            books.add(br.getOne(i));
-        Author author=ar.getOne(id);
-        for (Book book: author.getBooks()){
-            for (Author a: book.getAuthors()){
-                if (author.getId()==a.getId())
-                    book.getAuthors().remove(a);
-            }
-        }
+            books.add(br.findBooksById(i));
+        Author author=ar.findAuthorsById(author_id);
         author.setName(name);
         author.setBooks(books);
         for (Book book: author.getBooks()){
@@ -99,42 +79,30 @@ public class MainController {
         }
         return "Author edited";
     }
-    @GetMapping(path="/book/edit/{book_id}")
-    public @ResponseBody String editBook(@RequestParam Integer id, @RequestParam List<Integer> ids, @RequestParam String name){
-        Book book=br.getOne(id);
+    @PutMapping(path="/book/edit/{book_id}")
+    public @ResponseBody String editBook(@PathVariable Integer book_id, @RequestParam List<Integer> ids, @RequestParam String name){
+        Book book=br.findBooksById(book_id);
         List<Author> authors=new ArrayList<>();
         for (Integer i:ids)
-            authors.add(ar.getOne(i));
-        for (Author author: book.getAuthors()){
-            for (Book b: author.getBooks()){
-                if (book.getId()==b.getId())
-                    author.getBooks().remove(b);
-            }
-        }
+            authors.add(ar.findAuthorsById(i));
         book.setName(name);
         book.setAuthors(authors);
-        for(Author a: book.getAuthors()) {
-            a.getBooks().add(book);
-        }
         return "Book edited";
     }
     @GetMapping(path="/author/{author_id}")
-    public @ResponseBody List<BookDTO> getBooks(@RequestParam Integer author_id){
-        Author author=ar.getOne(author_id);
-        BookDTO authorDTO = new BookDTO();
-        return authorDTO.getBookDTOList(author.getBooks());
+    public @ResponseBody List<Book> getBooks(@PathVariable Integer author_id){
+        return ar.findAuthorsById(author_id).getBooks();
     }
-    @GetMapping(path="/books")
-    public @ResponseBody List<BookDTO> getmoreAuthors(){
-        BookDTO people=new BookDTO();
+    @GetMapping(path="/booksmorethen3")
+    public @ResponseBody List<Book> getMoreAuthors(){
         List<Book> books=new ArrayList<>();
         for (Book b: br.findAll()){
             if (b.getAuthors().size()>3) books.add(b);
         }
-        return people.getBookDTOList(books);
+        return books;
     }
     @GetMapping(path="/maxauthor")
-    public @ResponseBody String maxAuthor(){
+    public @ResponseBody Author maxAuthor(){
         Author author=new Author();
         int max=0;
         for (Author a: ar.findAll()){
@@ -143,6 +111,6 @@ public class MainController {
                 author=a;
             }
         }
-        return author.getName();
+        return author;
     }
 }
